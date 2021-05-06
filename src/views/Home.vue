@@ -5,8 +5,18 @@
 </template>
 
 <script>
+import { watch } from "vue";
+import getUser from "../composables/getUser";
+import { useRouter } from "vue-router";
 export default {
-  name: "Home",
-  components: {},
+  setup() {
+    const { user } = getUser();
+    const router = useRouter();
+    watch(user, () => {
+      if (!user.value) {
+        router.push({ name: "Landing" });
+      }
+    });
+  },
 };
 </script>
