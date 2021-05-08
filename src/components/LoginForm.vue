@@ -4,7 +4,8 @@
     <input type="email" required placeholder="email" v-model="email" />
     <input type="password" required placeholder="password" v-model="password" />
     <div class="error">{{ error }}</div>
-    <button>Log in</button>
+    <button v-if="!isPending">Log in</button>
+    <button v-if="isPending" disabled>Loading...</button>
     <p>Don't have account? <span @click="toggleForm">Sign up here.</span></p>
   </form>
 </template>
@@ -14,7 +15,7 @@ import { ref } from "vue";
 import useLogin from "../composables/useLogin";
 export default {
   setup(props, context) {
-    const { login, error } = useLogin();
+    const { login, error, isPending } = useLogin();
     const email = ref("");
     const password = ref("");
     const handleSubmit = async () => {
@@ -23,7 +24,7 @@ export default {
     const toggleForm = () => {
       context.emit("toggleForm");
     };
-    return { email, password, handleSubmit, error, toggleForm };
+    return { email, password, handleSubmit, error, toggleForm, isPending };
   },
 };
 </script>
