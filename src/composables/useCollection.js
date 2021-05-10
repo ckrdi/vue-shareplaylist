@@ -9,8 +9,8 @@ const useCollection = (collection) => {
     try {
       await projectFirestore.collection(collection).add(doc);
     } catch (err) {
-      console.log(err.message);
-      error.value = "Could not send the message";
+      // console.log(err.message);
+      error.value = "Could not create the playlist";
     }
   };
   return { error, addDoc };
