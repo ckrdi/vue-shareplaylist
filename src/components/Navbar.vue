@@ -56,4 +56,13 @@ button {
   margin-left: 16px;
   font-size: 14px;
 }
+@media only screen and (max-width: 480px) {
+  nav {
+    display: grid;
+    gap: 8px;
+  }
+  nav .links {
+    margin-left: 0;
+  }
+}
 </style>

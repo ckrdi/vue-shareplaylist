@@ -1,16 +1,11 @@
 <template>
   <div class="home">
-    <h2>Hello Home</h2>
+    <h2>Hello, {{ user.displayName }}.</h2>
     <router-link :to="{ name: 'CreatePlaylist' }">
-      <h2>Create New Playlist</h2>
+      <h2 class="btn">Create New Playlist</h2>
     </router-link>
   </div>
-  <div v-for="document in documents" :key="document.id">
-    <h5>{{ document.userName }}</h5>
-    <h4>{{ document.title }}</h4>
-    <h4>{{ document.description }}</h4>
-    <img :src="document.coverUrl" />
-  </div>
+  <ListView :playlists="documents" />
   <div class="error">{{ error }}</div>
 </template>
 
@@ -19,7 +14,11 @@ import { watch } from "vue";
 import getUser from "../composables/getUser";
 import { useRouter } from "vue-router";
 import getCollection from "../composables/getCollection";
+import ListView from "../components/ListView.vue";
 export default {
+  components: {
+    ListView,
+  },
   setup() {
     const { user } = getUser();
     const router = useRouter();
@@ -31,7 +30,20 @@ export default {
 
     const { documents, error } = getCollection("playlists");
 
-    return { documents, error };
+    return { user, documents, error };
   },
 };
 </script>
+
+<style scoped>
+.home {
+  display: flex;
+  justify-content: space-between;
+}
+@media only screen and (max-width: 480px) {
+  .home {
+    display: grid;
+    gap: 8px;
+  }
+}
+</style>
