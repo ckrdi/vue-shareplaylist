@@ -42,7 +42,8 @@ export default {
     const fileError = ref(null);
     const isPending = ref(false);
     const hasCreated = ref(null);
-
+    const { user } = getUser();
+    const router = useRouter();
     const { storageError, url, filePath, uploadImage } = useStorage();
     const { error, addDoc } = useCollection("playlists");
 
@@ -52,7 +53,7 @@ export default {
       if (imageFile.value) {
         isPending.value = true;
         await uploadImage(imageFile.value);
-        await addDoc({
+        const res = await addDoc({
           title: title.value,
           description: description.value,
           coverUrl: url.value,
@@ -67,6 +68,9 @@ export default {
         imageFile.value = null;
         isPending.value = false;
         hasCreated.value = "Your playlist has been created!";
+        if (!error.value) {
+          router.push({ name: "PlaylistDetails", params: { id: res.id } });
+        }
       } else {
         fileError.value = "Please upload a .png or .jpg/.jpeg image";
       }
@@ -87,8 +91,6 @@ export default {
       }
     };
 
-    const { user } = getUser();
-    const router = useRouter();
     watch(user, () => {
       if (!user.value) {
         router.push({ name: "Auth" });

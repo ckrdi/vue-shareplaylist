@@ -1,7 +1,7 @@
 import { ref, watchEffect } from "vue";
 import { projectFirestore } from "../firebase/config";
 
-const getCollection = (collection) => {
+const getCollection = (collection, docId = "") => {
   const documents = ref(null);
   const error = ref(null);
 
@@ -14,8 +14,14 @@ const getCollection = (collection) => {
       snap.docs.forEach((doc) => {
         doc.data().createdAt && results.push({ ...doc.data(), id: doc.id });
       });
-      documents.value = results;
-      error.value = null;
+      if (docId) {
+        let singleResult = results.filter((res) => res.id === docId);
+        documents.value = singleResult[0];
+        error.value = null;
+      } else {
+        documents.value = results;
+        error.value = null;
+      }
     },
     (err) => {
       console.log(err.message);

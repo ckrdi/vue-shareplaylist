@@ -11,11 +11,10 @@ const useStorage = () => {
 
   const uploadImage = async (file) => {
     storageError.value = null;
-    filePath.value = `covers/
-      ${user.value.uid}/
-      ${user.value.uid}+${Date.now()}+${file.name}`;
+    filePath.value = `covers/${user.value.uid}/${
+      user.value.uid
+    }+${Date.now()}+${file.name}`;
     const storageRef = projectStorage.ref(filePath.value);
-
     try {
       const res = await storageRef.put(file);
       url.value = await res.ref.getDownloadURL();

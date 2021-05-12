@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import Landing from "../views/Landing.vue";
 import { projectAuth } from "../firebase/config";
 import CreatePlaylist from "../views/CreatePlaylist.vue";
+import PlaylistDetails from "../views/PlaylistDetails.vue";
 import NotFound from "../views/NotFound.vue";
 
 // route guard basically let people in based on truthiness of user
@@ -49,6 +50,13 @@ const routes = [
     path: "/playlists/create",
     name: "CreatePlaylist",
     component: CreatePlaylist,
+    beforeEnter: requireAuth,
+  },
+  {
+    path: "/playlists/:id",
+    name: "PlaylistDetails",
+    component: PlaylistDetails,
+    props: true,
     beforeEnter: requireAuth,
   },
   {
