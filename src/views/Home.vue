@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <h2>Hello, {{ user.displayName }}.</h2>
+    <h2 v-if="user">Hello, {{ user.displayName }}.</h2>
     <router-link :to="{ name: 'CreatePlaylist' }">
       <h2 class="btn">Create New Playlist</h2>
     </router-link>
@@ -24,7 +24,7 @@ export default {
     const router = useRouter();
     watch(user, () => {
       if (!user.value) {
-        router.push({ name: "Landing" });
+        router.push({ name: "Auth" });
       }
     });
 

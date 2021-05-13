@@ -13,13 +13,16 @@
 <script>
 import { ref } from "vue";
 import useLogin from "../composables/useLogin";
+import { useRouter } from "vue-router";
 export default {
   setup(props, context) {
     const { login, error, isPending } = useLogin();
     const email = ref("");
     const password = ref("");
+    const router = useRouter();
     const handleSubmit = async () => {
       await login(email.value, password.value);
+      router.push({ name: "Home" });
     };
     const toggleForm = () => {
       context.emit("toggleForm");
