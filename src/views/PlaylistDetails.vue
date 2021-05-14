@@ -17,7 +17,18 @@
     </div>
     <!-- song list -->
     <div class="song-list">
-      <p>songs here</p>
+      <p v-if="!playlist.songs.length">There is no song(s) here</p>
+      <div class="single-song" v-for="song in playlist.songs" :key="song.id">
+        <div class="details">
+          <h3>{{ song.title }}</h3>
+          <p>{{ song.artist }}</p>
+        </div>
+        <button v-if="ownership && !deleting" @click="handleSongDel(song.id)">
+          Delete
+        </button>
+        <button v-if="deleting" disabled>Loading...</button>
+      </div>
+      <AddSong v-if="ownership" :id="id" />
     </div>
   </div>
 </template>
@@ -28,8 +39,12 @@ import getUser from "../composables/getUser";
 import { computed, ref } from "vue";
 import { projectFirestore, projectStorage } from "../firebase/config";
 import { useRouter } from "vue-router";
+import AddSong from "../components/AddSong.vue";
 
 export default {
+  components: {
+    AddSong,
+  },
   props: {
     id: String,
   },
@@ -48,6 +63,7 @@ export default {
 
     const handleDelete = async () => {
       deleting.value = true;
+      deleteErr.value = null;
       let sure = confirm("Are you sure you want to delete this playlist?");
       if (sure) {
         const storageRef = projectStorage.ref(playlist.value.filePath);
@@ -67,7 +83,37 @@ export default {
       }
     };
 
-    return { playlist, error, ownership, handleDelete, deleteErr, deleting };
+    const handleSongDel = async (id) => {
+      const songs = playlist.value.songs.filter((song) => {
+        return song.id != id;
+      });
+      deleting.value = true;
+      let sure = confirm("Are you sure you want to delete this song?");
+      if (sure) {
+        try {
+          await projectFirestore
+            .collection("playlists")
+            .doc(props.id)
+            .update({ songs });
+          deleting.value = false;
+        } catch (err) {
+          deleteErr.value = err.message;
+          deleting.value = false;
+        }
+      } else {
+        deleting.value = false;
+      }
+    };
+
+    return {
+      playlist,
+      error,
+      ownership,
+      handleDelete,
+      deleteErr,
+      deleting,
+      handleSongDel,
+    };
   },
 };
 </script>
@@ -110,6 +156,14 @@ export default {
 }
 .description {
   text-align: left;
+}
+.single-song {
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed var(--secondary);
+  margin-bottom: 20px;
 }
 @media only screen and (max-width: 480px) {
   .playlist-details {

@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <h2>Your playlist(s)</h2>
+    <h2>All playlist(s)</h2>
     <router-link :to="{ name: 'CreatePlaylist' }">
       <h4 class="btn">Create New Playlist</h4>
     </router-link>
@@ -20,10 +20,8 @@ export default {
   },
   setup() {
     const { user } = getUser();
-    let id = "";
-    let query = ["userId", "==", user.value.uid];
 
-    const { documents, error } = getCollection("playlists", id, query);
+    const { documents, error } = getCollection("playlists");
 
     return { user, documents, error };
   },

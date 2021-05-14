@@ -20,6 +20,7 @@
     <div class="error">{{ fileError }}</div>
     <div class="error">{{ storageError }}</div>
     <div class="error">{{ error }}</div>
+    <div class="error">{{ createErr }}</div>
     <div>{{ hasCreated }}</div>
     <button v-if="!isPending">Create</button>
     <button v-if="isPending" disabled>Loading...</button>
@@ -46,30 +47,36 @@ export default {
     const router = useRouter();
     const { storageError, url, filePath, uploadImage } = useStorage();
     const { error, addDoc } = useCollection("playlists");
+    const createErr = ref(null);
 
     const handleSubmit = async () => {
       hasCreated.value = null;
+      createErr.value = null;
       // check if the playlist has the cover image uploaded
       if (imageFile.value) {
-        isPending.value = true;
-        await uploadImage(imageFile.value);
-        const res = await addDoc({
-          title: title.value,
-          description: description.value,
-          coverUrl: url.value,
-          filePath: filePath.value,
-          userId: user.value.uid,
-          userName: user.value.displayName,
-          createdAt: timestamp(),
-          songs: [],
-        });
-        title.value = "";
-        description.value = "";
-        imageFile.value = null;
-        isPending.value = false;
-        hasCreated.value = "Your playlist has been created!";
-        if (!error.value) {
-          router.push({ name: "PlaylistDetails", params: { id: res.id } });
+        try {
+          isPending.value = true;
+          await uploadImage(imageFile.value);
+          const res = await addDoc({
+            title: title.value,
+            description: description.value,
+            coverUrl: url.value,
+            filePath: filePath.value,
+            userId: user.value.uid,
+            userName: user.value.displayName,
+            createdAt: timestamp(),
+            songs: [],
+          });
+          title.value = "";
+          description.value = "";
+          imageFile.value = null;
+          isPending.value = false;
+          hasCreated.value = "Your playlist has been created!";
+          if (!error.value) {
+            router.push({ name: "PlaylistDetails", params: { id: res.id } });
+          }
+        } catch (err) {
+          createErr.value = err.message;
         }
       } else {
         fileError.value = "Please upload a .png or .jpg/.jpeg image";
@@ -107,6 +114,7 @@ export default {
       error,
       isPending,
       hasCreated,
+      createErr,
     };
   },
 };
