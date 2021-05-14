@@ -1,5 +1,5 @@
 <template>
-  <h2>Hello Landing</h2>
+  <h2>Share your playlist(s) with everyone around the world!</h2>
 </template>
 
 <script>
